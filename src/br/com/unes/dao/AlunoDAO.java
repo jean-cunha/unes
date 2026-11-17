@@ -155,6 +155,47 @@ public class AlunoDAO {
 	
 	
 	
+	public List<Aluno> listarPorCurso(int cursoId) throws SQLException {
+		String sql = "SELECT * FROM alunos WHERE curso_id = ? ORDER BY nome";
+		List<Aluno> lista = new ArrayList<>();
+
+		try (Connection conexao = br.com.unes.util.Conexao.getConexao();
+				PreparedStatement ps = conexao.prepareStatement(sql)) {
+			ps.setInt(1, cursoId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) lista.add(montarAluno(rs));
+			}
+		}
+		return lista;
+	}
+
+	public void atualizar(Aluno aluno) throws SQLException {
+		String sql = "UPDATE alunos SET "
+				+ "ra = ?, nome = ?, nome_social = ?, genero = ?, data_nascimento = ?, cpf = ?, rg = ?, "
+				+ "titulo_eleitor = ?, nome_responsavel = ?, nota_enem = ?, possui_problema_saude = ?, "
+				+ "descricao_problema_saude = ?, possui_deficiencia = ?, descricao_deficiencia = ?, email = ?, "
+				+ "telefone = ?, telefone_emergencia = ?, cep = ?, logradouro = ?, numero = ?, complemento = ?, "
+				+ "bairro = ?, cidade = ?, uf = ?, curso_id = ?, turno = ?, data_ingresso = ?, "
+				+ "atualizado_em = CURRENT_TIMESTAMP WHERE id = ?";
+
+		try (Connection conexao = br.com.unes.util.Conexao.getConexao();
+				PreparedStatement ps = conexao.prepareStatement(sql)) {
+			preencherParamtro(ps, aluno);
+			ps.setInt(28, aluno.getId());
+			ps.executeUpdate();
+		}
+	}
+
+	public void excluir(int id) throws SQLException {
+		String sql = "DELETE FROM alunos WHERE id = ?";
+
+		try (Connection conexao = br.com.unes.util.Conexao.getConexao();
+				PreparedStatement ps = conexao.prepareStatement(sql)) {
+			ps.setInt(1, id);
+			ps.executeUpdate();
+		}
+	}
+
 	//============================================================
 	// PARÂMETROS SQL
 	//============================================================
